@@ -67,8 +67,8 @@
 #define ENDSTOPS_INVERTING 1
 
 // Optionally disable max endstops to save pins or wiring
-#define ENDSTOPS_MIN_ENABLED 1
-#define ENDSTOPS_MAX_ENABLED 1
+#define ENDSTOPS_MIN_ENABLED 0
+#define ENDSTOPS_MAX_ENABLED 0
 
 // How many temperature samples to take.  each sample takes about 100 usecs.
 #define TEMPERATURE_SAMPLES 5
@@ -124,7 +124,7 @@
 //#define EXTRUDER_THERMOCOUPLE_PIN  -1 //a -1 disables thermocouple readings
 
 
-#define MSPIN A5
+#define MSPIN D8 //a5 for modified fabscan shield (orig A0)
 #define CANTSTEP_LED_PIN 13
 
 //#define WAIT_SIGNAL_PIN A1
