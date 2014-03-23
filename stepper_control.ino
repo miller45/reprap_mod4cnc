@@ -1,23 +1,14 @@
-#define USETIMER1
-//#define USETIMER2
+
 #define MOVE_PHASE_ACCEL 0
 #define MOVE_PHASE_CONST_VELOCITY 1
 #define MOVE_PHASE_DECEL 2
 
-#ifdef USETIMER1
+
 #define STEPTIMEROCR OCR1A
 #define DISABLETIMERCOMPAREIRQ  TIMSK1 = 0<<OCIE1A // is enabled elsewhere
 #define SETTIMERMODE TCCR1A = 0
 #define SETCOUNTERCONTROLREGS TCCR1B = 1<<WGM12 | 0<<CS12 | 1<<CS11 | 0<<CS10
 #define ENABLETIMERCOMPARIRQ     TIMSK1 = 1<<OCIE1A
-#endif
-#ifdef USETIMER2
-#define STEPTIMEROCR OCR2A
-#define DISABLETIMERCOMPAREIRQ  TIMSK2 = 0<<OCIE2A // is enabled elsewhere
-#define SETTIMERMODE TCCR2A = 0
-#define SETCOUNTERCONTROLREGS TCCR2B = 1<<WGM22 | 0<<CS22 | 1<<CS21 | 0<<CS20
-#define ENABLETIMERCOMPARIRQ     TIMSK2 = 1<<OCIE2A
-#endif
 
 
 
@@ -353,12 +344,9 @@ inline unsigned int Timer1Delay(unsigned int delay) {
 // send step pulses to motor controllers, do
 // acceleration calculations, and advance move
 // queue if done
-#ifdef USETIMER1
+
 ISR(TIMER1_COMPA_vect) {
-#endif  
-#ifdef USETIMER2
-ISR(TIMER2_COMPA_vect) {
-#endif
+
   // Because we re-enable interrupts below, we must manually check
   // to prevent reentrancy if the routine takes too long
   if (inTimer1InterruptRoutine) return;
