@@ -1,16 +1,6 @@
-
 #define MOVE_PHASE_ACCEL 0
 #define MOVE_PHASE_CONST_VELOCITY 1
 #define MOVE_PHASE_DECEL 2
-
-
-#define STEPTIMEROCR OCR1A
-#define DISABLETIMERCOMPAREIRQ  TIMSK1 = 0<<OCIE1A // is enabled elsewhere
-#define SETTIMERMODE TCCR1A = 0
-#define SETCOUNTERCONTROLREGS TCCR1B = 1<<WGM12 | 0<<CS12 | 1<<CS11 | 0<<CS10
-#define ENABLETIMERCOMPARIRQ     TIMSK1 = 1<<OCIE1A
-
-
 
 
 // All of the following must be
@@ -58,10 +48,10 @@ volatile long arcAxis[2];
 volatile long arcStep, arcF;
 volatile unsigned char arcOldDominantAxis;
 volatile char arcOldFollowingSign, arcDirectionXORValue, arcOctant;
- int escpin= 9;
+
 void init_steppers()
 {
-  analogWrite(escpin,1);
+   analogWrite(MOTOR_ESC_PIN,1);
   #if STEPPERS_ALWAYS_ON == 0
   // Turn them off to start.
 
@@ -126,14 +116,12 @@ void init_steppers()
     digitalWrite(CANTSTEP_LED_PIN,LOW);
 #endif
 
-#ifdef WAIT_ENABLED
-  // wait pins
-  getRegAndBitmask(&wait_signal_reg, &wait_signal_bitmask, WAIT_SIGNAL_PIN, INPUT);  
-  pinMode(WAIT_SIGNAL_PIN,INPUT);
-  getRegAndBitmask(&wait_led_reg, &wait_led_bitmask, WAIT_LED_PIN, OUTPUT);  
-  pinMode(WAIT_LED_PIN,OUTPUT);
-  fastDigitalWrite( wait_led_reg, wait_led_bitmask,HIGH);
-#endif  
+//  // wait pins
+//  getRegAndBitmask(&wait_signal_reg, &wait_signal_bitmask, WAIT_SIGNAL_PIN, INPUT);  
+//  pinMode(WAIT_SIGNAL_PIN,INPUT);
+//  getRegAndBitmask(&wait_led_reg, &wait_led_bitmask, WAIT_LED_PIN, OUTPUT);  
+//  pinMode(WAIT_LED_PIN,OUTPUT);
+//  fastDigitalWrite( wait_led_reg, wait_led_bitmask,HIGH);
 
   // micro step  
   setMicroStep(STEPPER_MICROSTEPS);  
@@ -318,33 +306,26 @@ void disable_steppers()
 // Set up Timer1 to be used to control stepping
 void SetupTimer1()
 {
- 
-  DISABLETIMERCOMPAREIRQ;
+  // Clear Timer1 Output Compare Match interrupt enable
+  TIMSK1 = 0<<OCIE1A;
   
   // Settings - mode 8 (Clear Timer on Compare match), divide by 8 (thus 2MHz clock since system clock is 16MHz)
-  SETTIMERMODE;
-  SETCOUNTERCONTROLREGS;
- 
+  TCCR1A = 0;
+  TCCR1B = 1<<WGM12 | 0<<CS12 | 1<<CS11 | 0<<CS10;
+  
+  // set pwm freq for pin 3,11
+   TCCR2B = (TCCR2B & 0xF8) | 7;
 }
-
-
 
 // Calculate Timer1 delay in microseconds
 inline unsigned int Timer1Delay(unsigned int delay) {
-#ifdef USETIMER1
   return delay<<1; // 2MHz clock, so multiply by two to get clock cycles for given delay
-#endif
-#ifdef USETIMER2
-  return delay<<2; // 2MHz clock, so multiply by two to get clock cycles for given delay
-#endif
-
 }
 
 // Timer1 output compare match A interrupt vector handler
 // send step pulses to motor controllers, do
 // acceleration calculations, and advance move
 // queue if done
-
 ISR(TIMER1_COMPA_vect) {
 
   // Because we re-enable interrupts below, we must manually check
@@ -546,8 +527,10 @@ ISR(TIMER1_COMPA_vect) {
   }
 
   // Load new value into compare match register (disabling interrupts first)
-  cli();
-  STEPTIMEROCR = timer1LoadValue;
+  //cli();
+  TIMSK1 = 0<<OCIE1A;
+  OCR1A = timer1LoadValue;
+  TIMSK1 = 1<<OCIE1A;
   
   // Clear flag preventing re-entrancy
   inTimer1InterruptRoutine = false;
@@ -622,13 +605,13 @@ void advance_move_queue()
     move_finished = false;
     
     // Load compare match register (must disable interrupts while doing so)
-    cli();
-    STEPTIMEROCR = timer1LoadValue;
-    sei();
+//    cli();
+    TIMSK1 = 0<<OCIE1A;
+    OCR1A = timer1LoadValue;
+    //sei();
 
     // Set Timer1 Output Compare Match interrupt enable
-      // Set Timer1 Output Compare Match interrupt enable
-    ENABLETIMERCOMPARIRQ,
+    TIMSK1 = 1<<OCIE1A;
 
     moving = true;
   } else { // Otherwise stop timer and disable steppers
@@ -636,7 +619,7 @@ void advance_move_queue()
     moving = false;
 
     // Clear Timer1 Output Compare Match interrupt enable
-    DISABLETIMERCOMPAREIRQ;
+    TIMSK1 = 0<<OCIE1A;
 
     // Disable steppers - note this is not a problem with screw thread based drives,
     // but for pulley and belt systems there should really be a delay before disabling

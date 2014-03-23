@@ -36,7 +36,7 @@
 #define FAST_XY_FEEDRATE_INCH 7.086
 #define FAST_Z_FEEDRATE_INCH 5.905
 
-#define FAST_XY_FEEDRATE_MM 180
+#define FAST_XY_FEEDRATE_MM 240 //180
 #define FAST_Z_FEEDRATE_MM 180
 
 #else
@@ -93,25 +93,28 @@
 *
 * this uses the undocumented feature of Arduino - pins 14-19 correspond to analog 0-5
 ****************************************************************************************/
-
+//brushless motor control via esc (pwm)
+#define MOTOR_ESC_PIN 3
 //cartesian bot pins
-#define X_STEP_PIN 3
+#define X_STEP_PIN 9
 #define X_DIR_PIN 4
 #define X_ENABLE_PIN 2
-#define X_MIN_PIN 10
-#define X_MAX_PIN 10
 
 #define Y_STEP_PIN 6
 #define Y_DIR_PIN 7
 #define Y_ENABLE_PIN 5
-#define Y_MIN_PIN 8
-#define Y_MAX_PIN 9
 
 #define Z_STEP_PIN 12
 #define Z_DIR_PIN 13
 #define Z_ENABLE_PIN 11
-#define Z_MIN_PIN 10
-#define Z_MAX_PIN 10
+
+
+#define X_MIN_PIN 8
+#define X_MAX_PIN 8
+#define Y_MIN_PIN 8
+#define Y_MAX_PIN 8
+#define Z_MIN_PIN 8
+#define Z_MAX_PIN 8
 
 //extruder pins
 // NOTE - USING Timer1 FOR STEPPER TIMER SO CAN'T USER PINS 9 OR 10 FOR PWM
@@ -124,7 +127,7 @@
 //#define EXTRUDER_THERMOCOUPLE_PIN  -1 //a -1 disables thermocouple readings
 
 
-#define MSPIN D8 //a5 for modified fabscan shield (orig A0)
+#define MSPIN 8 //8 for modified fabscan shield (orig A0)
 #define CANTSTEP_LED_PIN 13
 
 //#define WAIT_SIGNAL_PIN A1

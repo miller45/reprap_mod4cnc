@@ -349,6 +349,13 @@ void process_string(char instruction[], int size)
   {
     switch (intVals[M_CODE_INDEX])
     {
+     case 2:
+     case 3:
+     case 5:
+     case 6:
+      print("MSIM M");
+      println(intVals[M_CODE_INDEX]);
+      break;
      case 96:
      // cease waiting for push button
     // release_wait_for_signal();
@@ -406,13 +413,7 @@ void process_string(char instruction[], int size)
     case 114:
       show_position();
       break;
-    case 2:
-    case 3:
-    case 5:
-    case 6:
-     // print("MSIM M");
-     // println(intVals[M_CODE_INDEX]);
-      break;
+   
     //set max extruder speed, 0-255 PWM
     case 108:
     if (floatCodesSeen & S_CODE_SEEN)
