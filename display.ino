@@ -1,4 +1,4 @@
-//#define ENABLEI2C
+#define ENABLEI2C
 // display lib
 
 /*
@@ -19,7 +19,6 @@
 */
 
 #ifdef ENABLEI2C
-
 #include <Wire.h>
 #include <LCD.h>
 #include <LiquidCrystal_I2C.h>
@@ -58,7 +57,7 @@ void init_display()
   LCDsetCursorRow(1);
   LCDprintln("L2");
   LCDprintln("L3");
-  LCDprintln("L4");
+  LCDprintln("Status ROW");
 
 //  lcd.print("L1");
 //  lcd.setCursor ( 0, 2 );        // go to the third line

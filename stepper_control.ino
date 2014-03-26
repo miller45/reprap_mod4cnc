@@ -51,7 +51,7 @@ volatile char arcOldFollowingSign, arcDirectionXORValue, arcOctant;
 
 void init_steppers()
 {
-   analogWrite(MOTOR_ESC_PIN,1);
+  // analogWrite(MOTOR_ESC_PIN,1);
   #if STEPPERS_ALWAYS_ON == 0
   // Turn them off to start.
 
@@ -511,8 +511,7 @@ ISR(TIMER1_COMPA_vect) {
   *step_output_reg[Z_AXIS] &= ~step_bitmask[Z_AXIS];
 
   // If finished, start next move
-  if ( move_finished ) {
-
+  if ( move_finished ) {   
     // Make sure queue not being modified by
     // main routine and then advance
     if (!wait_for_signal && !move_queue_lock_main){   

@@ -137,6 +137,40 @@ void printNumber(unsigned int n)
   for (; i > 0; i--)
     print((char)('0' + buf[i - 1]));
 }
+
+
+void numberIntoChar(char* outbuf, int pos,int len,long n)
+{
+  unsigned char buf[10]; // Max unsigned int is 64435 so max digits is 5
+
+  if (n==0) {
+    for(int i=0;i<len;i++){
+      outbuf[i+pos]='0';
+    }
+    return;
+  } 
+  int i = 0;
+  while (n > 0) {
+    buf[i++] = n % 10;
+    n /= 10;
+  }  
+  
+  for(int j=0;j<len;j++){
+    if(len-j<=i){
+      outbuf[j+pos]='0'+buf[len-j-1];
+    }else{
+      outbuf[j+pos]='0';
+    }
+  }
+
+}
+
+
+
+
+
+
+
 /*
 // Smaller RX buffer (is 128 in official Arduino code)
 #define RX_BUFFER_SIZE 64

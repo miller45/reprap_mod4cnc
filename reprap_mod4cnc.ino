@@ -76,7 +76,7 @@ void loop()
       idle_time = millis();
     }
   }
-
+  
   //if theres a pause or we got a real command, do it
   if (bytes_received && (c == '\n' || no_data ))
   {
@@ -86,4 +86,12 @@ void loop()
     //clear command.
     init_process_string();
   }
+  char* buf={"          "};
+  LCDsetCursorRow(1);
+  numberIntoChar(buf, 0,9,current_steps[0]);
+  LCDprintln(buf);
+  numberIntoChar(buf, 0,9,current_steps[1]);
+  LCDprintln(buf); 
+  numberIntoChar(buf, 0,9,current_steps[2]);
+  LCDprintln(buf);
 }
