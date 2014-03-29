@@ -111,6 +111,26 @@ void LCDprintln(int n)
   printNumber((unsigned int)n);
   LCDprintln();
 }
+void LCDprintstatus(char c){
+  if(line!=0){
+     LCDsetCursorRow(0);
+  }
+
+  LCDprint(c);
+}
+void LCDprintstatus(const char c[]){
+ if(line!=0){
+     LCDsetCursorRow(0);
+  }
+  LCDprint(c);
+}
+
+void LCDprintstatus(float f){
+ if(line!=0){
+     LCDsetCursorRow(0);
+  }
+  LCDprint(f);
+}
 #else
 // dummys for compile corrent
 void init_display()
