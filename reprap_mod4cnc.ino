@@ -86,6 +86,7 @@ void loop()
     //clear command.
     init_process_string();
   }
+#ifdef off
   char* buf={"          "};
   LCDsetCursorRow(1);
   numberIntoChar(buf, 0,9,current_steps[0]);
@@ -94,4 +95,5 @@ void loop()
   LCDprintln(buf); 
   numberIntoChar(buf, 0,9,current_steps[2]);
   LCDprintln(buf);
+#endif  
 }
