@@ -27,8 +27,9 @@ void setup()
   Serial.begin(19200); // Don't need to give a baud rate because it is fixed at 19200 in our optimised version
   init_steppers();
   init_extruder();
+  init_motor();
   init_process_string();
-  init_display();
+  init_display();  
   calculateAccelConstants();
   SetupTimer1();
   println("start");

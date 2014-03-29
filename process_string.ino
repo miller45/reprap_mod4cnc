@@ -194,7 +194,6 @@ void process_string(char instruction[], int size)
     case 0:
     case 1:
     {
-   //   LCDprintln("G01");      
       // No more information needed
       next_move_ptr->move_type = MOVE_LINEAR;
       moveReceived = true; // There is a move to be queued
@@ -205,9 +204,7 @@ void process_string(char instruction[], int size)
     // Counterclockwise arc
     case 3:
     {
-    //  LCDprintln("G03");
       char arcDirection = (lastGCode == 3) ? ARC_COUNTERCLOCKWISE : ARC_CLOCKWISE;
-  //    if(lastGCode==3){ LCDprintln("G03");} else{ LCDprintln("G02");}
 
       next_move_ptr->move_type = MOVE_ARC;
         
@@ -291,25 +288,24 @@ void process_string(char instruction[], int size)
     }
     break;
     case 4: // Dwell
-     // LCDprintln("G04");
       delay((int)(floatVals[P_CODE_INDEX] * 1000));
       break;
-    case 20: // Inches for Units     
+
+    case 20: // Inches for Units
     case 21: // mm for Units
       while (moving) {} // Do not try and do this while moving
- //     if(lastGCode==20){ LCDprintln("G20"); }else { LCDprintln("G21");}
-      units_based_constants = (lastGCode == 20) ? units_based_constants_inch : units_based_constants_mm;      
+      units_based_constants = (lastGCode == 20) ? units_based_constants_inch : units_based_constants_mm;
       calculateAccelConstants();
-      break;      
+      break;
+      
     case 90: // Absolute Positioning
     case 91: // Incremental Positioning
       while (moving) {} // Do not try and do this while moving
       absMode = (lastGCode == 90) ? true : false;
-//      if(absMode){ LCDprintln("G90");} else { LCDprintln("G91");}
-      break;   
+      break;
+
     case 92: // Set absolute position - note that this must be G92 X?? Y?? Z?? and not just G92 alone which will in fact do nothing
       while (moving) {} // Do not try and do this while moving
-//       LCDprintln("G92");
       for (unsigned int i = 0; i < 3; i++) {
         if (floatCodesSeen & (X_CODE_SEEN<<i)) { // Can do this because Z follows Y follows X
           current_move_ptr->target_units[i] = floatVals[X_CODE_INDEX + i];
@@ -317,12 +313,8 @@ void process_string(char instruction[], int size)
         }
       }
       break;
-//    case 197: // wait
-//      set_and_wait_for_signal();
-//      break;
+
     default:
-//     LCDprint("huh? G");
- //    LCDprintln(lastGCode);
      print("huh? G");
       //println("Huh?");
       println(lastGCode);
@@ -348,28 +340,18 @@ void process_string(char instruction[], int size)
   {
     switch (intVals[M_CODE_INDEX])
     {
-     case 2:
-           break;
-     case 3:
-           break;
-     case 5:
-           break;
-     case 6:
-           break;
-     case 30:   
-     
-     // print("MSIM M");
-    //  println(intVals[M_CODE_INDEX]);
+    case 3: //motor clockwise
+      if (floatCodesSeen & S_CODE_SEEN) {
+        motor_set_speed((int)floatVals[S_CODE_INDEX]);
+        //TODO: wait for speed to establish
+      }
       break;
-     case 96:
-     // cease waiting for push button
-    // release_wait_for_signal();
+    case 5: //motor stop
+      motor_set_speed(0); //0rpm is motor off
+      break;   
+    case 30: //program end ensure motor off
+      motor_set_speed(0); //0rpm is motor off
       break;
-     case 97:
-      // wait for user to push button
-    
-      break;
-    //turn extruder on, forward
     case 101:
       extruder_set_direction(1);
       extruder_set_speed(extruder_speed);
@@ -405,22 +387,23 @@ void process_string(char instruction[], int size)
     case 105:
       show_temperature();
       break;
+
     //turn fan on
     case 106:
       extruder_set_cooler(255);
       break;
+
     //turn fan off
     case 107:
       extruder_set_cooler(0);
       break;
-    case 114:
-      show_position();
-      break;   
+
     //set max extruder speed, 0-255 PWM
     case 108:
-      if (floatCodesSeen & S_CODE_SEEN)
-        extruder_speed = (int)floatVals[S_CODE_INDEX];
-      break;      
+    if (floatCodesSeen & S_CODE_SEEN)
+      extruder_speed = (int)floatVals[S_CODE_INDEX];
+      break;
+
     default:
       //println("Huh?");
       print("Huh? M");
@@ -480,10 +463,3 @@ void show_temperature() {
   print("T:");
   println(extruder_get_temperature());
 }
-
-void show_position() {
-  print("POS:");
-  println(extruder_get_temperature());
-}
-
-
