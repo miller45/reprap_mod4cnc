@@ -213,3 +213,9 @@ pip-log.txt
 
 #Mr Developer
 .mr.developer.cfg
+Visual Micro/.reprap_mod4cnc.vsarduino.h
+Visual Micro/Compile.vmps.xml
+Visual Micro/Configuration.Debug.vmps.xml
+reprap_mod4cnc.atsln
+reprap_mod4cnc.atsuo
+reprap_mod4cnc.cppproj
